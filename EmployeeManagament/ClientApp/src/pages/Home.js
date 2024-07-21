@@ -52,11 +52,11 @@ export const Home = () => {
             {loading ? 'Loading....' :
                 <div>
                     {employees?.length > 0 ? (
-                        <div className="mt-5 p-3 shadow-sm  bg-white rounded">
+                        <div className="mt-3 p-3 shadow-sm  bg-white rounded">
                             <table className="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Ad</th>
+                                        <th className="w-25">Ad</th>
                                         <th>Yaş</th>
                                         <th>Departman</th>
                                         <th>İşlem</th>
@@ -96,10 +96,11 @@ export const Home = () => {
                                 </tbody>
                             </table>
 
-                            {pagination.total > 0 &&
-                                <div>
+                            {pagination.total > 1 &&
+                                <div className="d-flex justify-content-center gap-1">
                                     {paginationArray.map(number => (
                                         <button
+                                            className="btn btn-dark"
                                             key={number}
                                             onClick={() => fetchData(number)}
                                             disabled={number === pagination.current}

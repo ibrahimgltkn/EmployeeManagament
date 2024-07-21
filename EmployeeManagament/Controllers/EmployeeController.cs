@@ -12,7 +12,7 @@ public class EmployeeController : ControllerBase
     private static int IncId = 1;
 
     [HttpGet]
-    public ActionResult<PagedResponse<Employee>> GetEmployees(int page = 1, int pageSize = 2)
+    public ActionResult<PagedResponse<Employee>> GetEmployees(int page = 1, int pageSize = 5)
     {
         var pagedList = employees.ToPagedList(page, pageSize);
 
