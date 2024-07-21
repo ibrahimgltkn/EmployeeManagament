@@ -36,40 +36,43 @@ export const EditForm = (props) => {
     };
 
     return (
-        <div>
-            <h1>Çalışan Düzenle</h1>
+        <div className="container mt-2 p-3 shadow-sm  bg-light rounded">
+            <h6 className="mb-4">Personel Düzenle</h6>
             <form onSubmit={handleSubmit}>
-                <div className="form-field">
-                    <label htmlFor="name">İsim</label>
+                <div className="mb-3">
+                    <label htmlFor="name" className="form-label">İsim</label>
                     <input
                         type="text"
-                        name="name"
+                        id="name"
+                        className="form-control"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
                     />
                 </div>
-                <div className="form-field">
-                    <label htmlFor="age">Yaş</label>
+                <div className="mb-3">
+                    <label htmlFor="age" className="form-label">Yaş</label>
                     <input
                         type="number"
-                        name="age"
+                        id="age"
+                        className="form-control"
                         value={age}
                         onChange={(e) => setAge(e.target.value)}
                         required
                     />
                 </div>
-                <div className="form-field">
-                    <label htmlFor="department">Departman</label>
+                <div className="mb-3">
+                    <label htmlFor="department" className="form-label">Departman</label>
                     <input
                         type="text"
-                        name="department"
+                        id="department"
+                        className="form-control"
                         value={department}
                         onChange={(e) => setDepartment(e.target.value)}
                         required
                     />
                 </div>
-                <button type="submit">Düzenle</button>
+                <button type="submit" className="btn btn-outline-warning">Düzenle</button>
             </form>
         </div>
     );

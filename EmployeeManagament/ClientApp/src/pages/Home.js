@@ -2,6 +2,7 @@
 import { appConfig } from "../AppConfig";
 import { AddForm } from "../components/AddForm";
 import { EditForm } from "../components/EditForm";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 
@@ -9,12 +10,20 @@ export const Home = () => {
     const [employees, setEmployees] = useState(null);
     const [loading, setLoading] = useState(true);
     const [editData, setEditData] = useState(null);
+    const [pagination, setPagination] = useState({
+        current: 0,
+        total: 0
+    })
 
-    const fetchData = async () => {
+    const fetchData = async (page = 1 ) => {
         try {
-            const response = await fetch(`${appConfig.apiBase}/api/employee`).then(res => res.json());
+            const response = await fetch(`${appConfig.apiBase}/api/employee?page=${page}`).then(res => res.json());
             console.log(response)
-            setEmployees(response)
+            setEmployees(response.list)
+            setPagination({
+                current: response.pageNumber,
+                total: response.totalPage
+            })
         } catch (error) {
             console.log(error)
         } finally {
@@ -26,37 +35,91 @@ export const Home = () => {
         fetchData()
     }, []);
 
+    console.log(pagination)
+
+
+    const paginationArray = Array.from({ length: pagination.total }, (_, index) => index + 1)
     return (
         <div className="home-page">
-            <AddForm fetchAfterSuccess={fetchData} />
-            {editData && <EditForm fetchAfterSuccess={fetchData} data={editData} setEditData={setEditData} />}
+            <div className="row">
+                <div className="col-6">
+                    <AddForm fetchAfterSuccess={fetchData} />
+                </div>
+                <div className="col-6">
+                    {editData && <EditForm fetchAfterSuccess={fetchData} data={editData} setEditData={setEditData} />}
+                </div>
+            </div>
             {loading ? 'Loading....' :
                 <div>
-                    {employees?.length > 0 && employees.map((item) => {
+                    {employees?.length > 0 ? (
+                        <div className="mt-5 p-3 shadow-sm  bg-white rounded">
+                            <table className="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Ad</th>
+                                        <th>Yaş</th>
+                                        <th>Departman</th>
+                                        <th>İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {employees.map(item => (
+                                        <tr key={item.id}>
+                                            <td>{item.name}</td>
+                                            <td>{item.age}</td>
+                                            <td>{item.department}</td>
+                                            <td>
+                                                <button
+                                                    className="btn btn-warning me-2"
+                                                    onClick={() => setEditData(item)}
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    className="btn btn-danger"
+                                                    onClick={async () => {
+                                                        try {
+                                                            await fetch(`${appConfig.apiBase}/api/employee/DeleteEmployee/${item.id}`, {
+                                                                method: 'DELETE',
+                                                            });
+                                                            fetchData();
+                                                        } catch (error) {
+                                                            console.log(error);
+                                                        }
+                                                    }}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
 
-                        return (
-                            <div className="employee-card" key={item.id }>
-                                <p className="name">{item.name}</p>
-                                <p className="age">{item.age}</p>
-                                <p className="department">{item.department}</p>
-                                <button onClick={() => 
-                                    setEditData(item)
-                                }>Edit</button>
-                                <button onClick={async () => {
-                                    try {
-                                        await fetch(`${appConfig.apiBase}/api/employee/DeleteEmployee/${item.id}`, {
-                                            method: 'DELETE',
-                                        });
-                                        fetchData();
-                                    } catch (error) {
-                                        console.log(error)
-                                    } 
-                                }}>Delete</button>
-                            </div>
-                        )
-                    })}
+                            {pagination.total > 0 &&
+                                <div>
+                                    {paginationArray.map(number => (
+                                        <button
+                                            key={number}
+                                            onClick={() => fetchData(number)}
+                                            disabled={number === pagination.current}
+                                        >
+                                            {number}
+                                        </button>
+                                    ))}
+                                </div>
+                            }
+
+                            
+                        </div>) : (
+
+                        <div className="alert alert-warning mt-5 text-center w-auto" role="alert">
+                            Personel kaydı bulunmamaktadır.
+                        </div>
+                    )
+                    }
                 </div>}
-        
+
         </div>
     )
 }

@@ -12,10 +12,23 @@ public class EmployeeController : ControllerBase
     private static int IncId = 1;
 
     [HttpGet]
-    public ActionResult<IEnumerable<Employee>> GetEmployees(int page = 1)
+    public ActionResult<PagedResponse<Employee>> GetEmployees(int page = 1, int pageSize = 2)
     {
-        var List = employees.ToPagedList(page, 12);
-        return Ok(List);
+        var pagedList = employees.ToPagedList(page, pageSize);
+
+        var totalCount = pagedList.TotalItemCount;
+        var totalPages = (int)Math.Ceiling((decimal)totalCount / pageSize);
+
+        var response = new PagedResponse<Employee>
+        {
+            PageNumber = page,
+            PageSize = pageSize,
+            TotalCount = pagedList.TotalItemCount,
+            TotalPage = totalPages,
+            List = pagedList
+        };
+
+        return Ok(response);
     }
 
     [HttpGet("{id}")]
